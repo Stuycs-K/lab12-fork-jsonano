@@ -9,28 +9,33 @@
 int main() {
     printf("%d about to create 2 child processes\n", getpid());
 
-    int random_sleep;
     pid_t child1, child2;
+
     child1 = fork();
     if (child1 == 0) {
         srand(getpid());
-        random_sleep = rand() % 5 + 1;
-        printf("child1: %d %dsec\n", getpid(), random_sleep);
-        sleep(random_sleep);
-        printf("%d finished after %d sec\n", getpid(), random_sleep);
+        int sleep1 = rand() % 5 + 1;
+        printf("%d %dsec\n", getpid(), sleep1);
+        sleep(sleep1);
+        printf("%d finished after %d sec\n", getpid(), sleep1);
+        return sleep1;
     } else {
         child2 = fork();
         if (child2 == 0) {
             srand(getpid());
-            random_sleep = rand() % 5 + 1;
-            printf("child2: %d %dsec\n", getpid(), random_sleep);
-            sleep(random_sleep);
-            printf("%d finished after %d sec\n", getpid(), random_sleep);
+            int sleep2 = rand() % 5 + 1;
+            printf("%d %dsec\n", getpid(), sleep2);
+            sleep(sleep2);
+            printf("%d finished after %d sec\n", getpid(), sleep2);
+            return sleep2;
         } else {
-            printf("hello from parent\n");
+            int status;
+            int exited_pid = wait(&status); // waiting for a child to finish
+            printf("Main Process %d is done. Child %d slept for %d sec.\n", getpid(), exited_pid, WEXITSTATUS(status));
+            exit(0);
+            wait(NULL);
         }
     }
-    // printf("%d\n", getpid() % 5 + 1);
 
     return 0;
 }
